@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe Web App</title>
+  <style>
+    body {
+      background-color: pink;
+      color: #ff1493;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #d63384;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      color: #ff1493;
+      font-size: 2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .cell:hover {
+      background-color: #ffe4e1;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #c71585;
+    }
+
+    .restart {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .restart:hover {
+      background-color: #ff85c1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Tic-Tac-Toe</h1>
+  <div class="board" id="board"></div>
+  <div class="status" id="status"></div>
+  <button class="restart" onclick="restartGame()">Restart Game</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const statusText = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameBoard = [null, null, null, null, null, null, null, null, null];
+    let gameOver = false;
+
+    const winningCombos = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    function drawBoard() {
+      board.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.textContent = gameBoard[i];
+        cell.addEventListener('click', () => handleClick(i));
+        board.appendChild(cell);
+      }
+      if (!gameOver) {
+        statusText.textContent = "Player " + currentPlayer + "'s turn";
+      }
+    }
+
+    function handleClick(index) {
+      if (gameBoard[index] !== null || gameOver) return;
+      gameBoard[index] = currentPlayer;
+      if (checkWinner()) {
+        statusText.textContent = "🎉 Player " + currentPlayer + " Wins!";
+        gameOver = true;
+        drawBoard();
+        return;
+      }
+      if (!gameBoard.includes(null)) {
+        statusText.textContent = "It's a Draw!";
+        gameOver = true;
+        drawBoard();
+        return;
+      }
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      drawBoard();
+    }
+
+    function checkWinner() {
+      for (let combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (
+          gameBoard[a] !== null &&
+          gameBoard[a] === gameBoard[b] &&
+          gameBoard[a] === gameBoard[c]
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function restartGame() {
+      gameBoard = [null, null, null, null, null, null, null, null, null];
+      currentPlayer = 'X';
+      gameOver = false;
+      drawBoard();
+    }
+
+    drawBoard();
+  </script>
+</body>
+</html>
